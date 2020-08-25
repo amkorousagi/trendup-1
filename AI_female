@@ -485,36 +485,69 @@ for keyword in keyword:
 
         ############   KNN
 
-        for i in range(Fold):
-            c1 = 'Training_CurrentFold = Training_Fold%d' % (i + 1)
-            exec(c1)
-            c2 = 'Validation_CurrentFold = Validation_Fold%d' % (i + 1)
-            exec(c2)
+        Training_CurrentFold = Training_Fold1
+        Validation_CurrentFold = Validation_Fold1
+        knnModel_CurrentFold = KNeighborsClassifier(n_neighbors = 3).fit(Training_CurrentFold , TrainingFold_Label1.ravel())
+        knnscore_Fold1 = knnModel_CurrentFold.score(Validation_CurrentFold , ValidationFold_Label1)
 
-            c3 = 'knnModel_CurrentFold = KNeighborsClassifier(n_neighbors = 3).fit(Training_CurrentFold , TrainingFold_Label%d.ravel())' % (
-                    i + 1)
-            exec(c3)
-            c4 = 'knnscore_Fold%d = knnModel_CurrentFold.score(Validation_CurrentFold , ValidationFold_Label%d)' % (
-                i + 1, i + 1)
-            exec(c4)
+        Training_CurrentFold = Training_Fold2
+        Validation_CurrentFold = Validation_Fold2
+        knnModel_CurrentFold = KNeighborsClassifier(n_neighbors=3).fit(Training_CurrentFold,
+                                                                       TrainingFold_Label2.ravel())
+        knnscore_Fold2 = knnModel_CurrentFold.score(Validation_CurrentFold, ValidationFold_Label2)
+
+        Training_CurrentFold = Training_Fold3
+        Validation_CurrentFold = Validation_Fold3
+        knnModel_CurrentFold = KNeighborsClassifier(n_neighbors=3).fit(Training_CurrentFold,
+                                                                       TrainingFold_Label3.ravel())
+        knnscore_Fold3 = knnModel_CurrentFold.score(Validation_CurrentFold, ValidationFold_Label3)
+
+        Training_CurrentFold = Training_Fold4
+        Validation_CurrentFold = Validation_Fold4
+        knnModel_CurrentFold = KNeighborsClassifier(n_neighbors=3).fit(Training_CurrentFold,
+                                                                       TrainingFold_Label4.ravel())
+        knnscore_Fold4 = knnModel_CurrentFold.score(Validation_CurrentFold, ValidationFold_Label4)
 
         KNN_model = KNeighborsClassifier(n_neighbors=3).fit(Training_All, Training_All_Label.ravel())
         KNN_predict = KNN_model.predict(date_array)
 
         ############   SVM
-        for i in range(Fold):
-            c1 = 'Training_CurrentFold = Training_Fold%d' % (i + 1)
-            exec(c1)
-            c2 = 'Validation_CurrentFold = Validation_Fold%d' % (i + 1)
-            exec(c2)
+        Training_CurrentFold = Training_Fold1
+        Validation_CurrentFold = Validation_Fold1
 
-            svmModel_CurrentFold = svm.SVC(kernel='rbf')
-            c3 = 'svmModel_CurrentFold.fit(Training_CurrentFold , TrainingFold_Label%d.ravel())' % (i + 1)
-            exec(c3)
-            Predicted = np.array(svmModel_CurrentFold.predict(Validation_CurrentFold))
+        svmModel_CurrentFold = svm.SVC(kernel='rbf')
+        svmModel_CurrentFold.fit(Training_CurrentFold , TrainingFold_Label1.ravel())
 
-            c4 = 'svmscore_Fold%d = metrics.accuracy_score(ValidationFold_Label%d , Predicted)' % (i + 1, i + 1)
-            exec(c4)
+        Predicted = np.array(svmModel_CurrentFold.predict(Validation_CurrentFold))
+        svmscore_Fold1 = metrics.accuracy_score(ValidationFold_Label1 , Predicted)
+
+        Training_CurrentFold = Training_Fold2
+        Validation_CurrentFold = Validation_Fold2
+
+        svmModel_CurrentFold = svm.SVC(kernel='rbf')
+        svmModel_CurrentFold.fit(Training_CurrentFold, TrainingFold_Label2.ravel())
+
+        Predicted = np.array(svmModel_CurrentFold.predict(Validation_CurrentFold))
+        svmscore_Fold2 = metrics.accuracy_score(ValidationFold_Label2, Predicted)
+
+        Training_CurrentFold = Training_Fold3
+        Validation_CurrentFold = Validation_Fold3
+
+        svmModel_CurrentFold = svm.SVC(kernel='rbf')
+        svmModel_CurrentFold.fit(Training_CurrentFold, TrainingFold_Label3.ravel())
+
+        Predicted = np.array(svmModel_CurrentFold.predict(Validation_CurrentFold))
+        svmscore_Fold3 = metrics.accuracy_score(ValidationFold_Label3, Predicted)
+
+        Training_CurrentFold = Training_Fold4
+        Validation_CurrentFold = Validation_Fold4
+
+        svmModel_CurrentFold = svm.SVC(kernel='rbf')
+        svmModel_CurrentFold.fit(Training_CurrentFold, TrainingFold_Label4.ravel())
+
+        Predicted = np.array(svmModel_CurrentFold.predict(Validation_CurrentFold))
+        svmscore_Fold4 = metrics.accuracy_score(ValidationFold_Label4, Predicted)
+
 
         SVM_model = svm.SVC(kernel='rbf')
         SVM_model.fit(Training_All, Training_All_Label.ravel())
@@ -529,20 +562,49 @@ for keyword in keyword:
         curs1.execute(query1)
         curs1.execute(query2)
 
-        for i in range(Fold):
-            s1 = 'values1=round(knnscore_Fold%d,4)' % (i + 1)
-            exec(s1)
-            s2 = 'values2=round(svmscore_Fold%d,4)' % (i + 1)
-            exec(s2)
-            values1 = values1 * 100
-            values1 = str(values1)
-            values2 = values2 * 100
-            values2 = str(values2)
-            values = (values1, values2)
-            values = (values1, values2)
-            sql1 = "insert into " + keyword + "_MLaccuracy (KNN,SVM) values(%s,%s)"
-            query1 = str(sql1)
-            curs1.execute(query1, values)
+        values1=round(knnscore_Fold1,4)
+        values2=round(svmscore_Fold1,4)
+        values1 = values1 * 100
+        values1 = str(values1)
+        values2 = values2 * 100
+        values2 = str(values2)
+        values = (values1, values2)
+        sql1 = "insert into " + keyword + "_MLaccuracy (KNN,SVM) values(%s,%s)"
+        query1 = str(sql1)
+        curs1.execute(query1, values)
+
+        values1 = round(knnscore_Fold2, 4)
+        values2 = round(svmscore_Fold2, 4)
+        values1 = values1 * 100
+        values1 = str(values1)
+        values2 = values2 * 100
+        values2 = str(values2)
+        values = (values1, values2)
+        sql1 = "insert into " + keyword + "_MLaccuracy (KNN,SVM) values(%s,%s)"
+        query1 = str(sql1)
+        curs1.execute(query1, values)
+
+        values1 = round(knnscore_Fold3, 4)
+        values2 = round(svmscore_Fold3, 4)
+        values1 = values1 * 100
+        values1 = str(values1)
+        values2 = values2 * 100
+        values2 = str(values2)
+        values = (values1, values2)
+        sql1 = "insert into " + keyword + "_MLaccuracy (KNN,SVM) values(%s,%s)"
+        query1 = str(sql1)
+        curs1.execute(query1, values)
+
+        values1 = round(knnscore_Fold4, 4)
+        values2 = round(svmscore_Fold4, 4)
+        values1 = values1 * 100
+        values1 = str(values1)
+        values2 = values2 * 100
+        values2 = str(values2)
+        values = (values1, values2)
+        sql1 = "insert into " + keyword + "_MLaccuracy (KNN,SVM) values(%s,%s)"
+        query1 = str(sql1)
+        curs1.execute(query1, values)
 
         for i in range(156):
             value1 = (str(KNN_predict[i]), str(SVM_predict[i]))
